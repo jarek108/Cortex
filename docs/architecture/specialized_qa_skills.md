@@ -16,13 +16,13 @@ In reality, the agent likely just ran `pytest` or `npm test`. But real-world sof
 
 A generic "QA prompt" cannot know how to test *your* specific app. 
 
-## The Separation of Duties: Policy Formulation vs. Execution
+## The Separation of Duties: Layer 2 Policy vs. Layer 1 Execution
 
-To solve this, the Developer OS relies on the **3-Layer Prompting Stack**. 
+To solve this, Cortex relies on its **Hierarchical Intelligence** architecture. 
 
-We do not write a massive prompt telling the QA agent how to test a Unity game. The QA Agent (Roles Prompting) is a **generic, blind execution engine**. It has zero authority to invent testing philosophy. 
+We do not write a massive prompt telling the QA agent how to test a Unity game. The QA Agent (Layer 1) is a **generic, blind execution engine**. It has zero authority to invent testing philosophy. 
 
-Instead, "QA Skills" live in the target project's `GEMINI.md` file (Project Prompting), under a strict `## QA Rituals & Testing` header. 
+Instead, "QA Skills" live in the target project's `GEMINI.md` file (Project Knowledge), under a strict `## QA Rituals & Testing` header. 
 
 When the QA Agent wakes up, its generic prompt instructs it to:
 1. Locate the `## QA Rituals & Testing` section in `GEMINI.md`.
@@ -31,14 +31,14 @@ When the QA Agent wakes up, its generic prompt instructs it to:
 
 ## The Evolution of QA Agents (Skill Growth)
 
-How do these project-specific "Skills" get authored? They are written by the **Manager Agent** based on human feedback. 
+How do these project-specific "Skills" get authored? They are written by the **Layer 2 Architect (Manager)** based on your feedback. 
 
-If the human Tech Lead rejects a completed task because *"The UI looks broken on mobile,"* the system does not just fix the immediate bug.
+If you reject a completed task because *"The UI looks broken on mobile,"* Cortex does not just fix the immediate bug.
 
 1. **Human Feedback:** "You approved this, but the UI overlaps the hex grid."
-2. **Manager Synthesis:** The Manager agent realizes the QA system has a blind spot.
-3. **Skill Update:** The Manager autonomously updates the project's `GEMINI.md` file: *"New Visual Check: QA MUST always use `capture_unity.py` to visually verify UI does not occlude the central hex grid."*
+2. **Layer 2 Synthesis:** The Manager agent realizes the Layer 1 QA system has a blind spot.
+3. **Skill Update:** The Manager autonomously updates your project's `GEMINI.md` file: *"New Visual Check: QA MUST always use `capture_unity.py` to visually verify UI does not occlude the central hex grid."*
 
-The next time the generic QA Agent wakes up (even for a completely different feature), it reads the updated `GEMINI.md`. **The system has permanently learned how to test your UI.**
+The next time the generic Layer 1 QA Agent wakes up (even for a completely different feature), it reads the updated `GEMINI.md`. **Cortex has permanently learned how to test your UI.**
 
-By treating QA as a strict separation between **Policy Formulation (Manager -> Project Knowledge)** and **Policy Execution (QA -> Role Prompts)**, the Developer OS transforms generic agents into seasoned, project-aware engineering partners who understand exactly what "done" looks like in your codebase.
+By treating QA as a strict separation between **Policy Formulation (Layer 2)** and **Policy Execution (Layer 1)**, Cortex transforms generic agents into seasoned, project-aware engineering partners who understand exactly what "done" looks like in your codebase.

@@ -1,66 +1,33 @@
 # Orchestrator Guide (E2E Workflows)
 
-The orchestrator (`implementation_run.py`) is the engine that drives the Autonomous Developer OS. It manages the agent loop, enforces the artifact contract, and interacts with the Central Registry.
+The orchestrator (`implementation_run.py`) is the engine that drives Layer 1 (The Factory Floor) of the Cortex OS. It manages the agent loop, enforces the artifact contract, and manages the Git-Native State Machine.
+
+> **Note:** As a human user, you rarely need to invoke `implementation_run.py` directly. You interact with Layer 2 (The Manager), which automatically dispatches the orchestrator via the `implement_feature.py` tool.
 
 ## Basic Usage
 
-To launch an autonomous implementation run, you need a target workspace directory containing your codebase and an `IRQ.md` (Implementation Request) file.
+If you have manually drafted an `IRQ.md` (Implementation Request) and `QAR.md` (QA Request) in your workspace and want to trigger the factory floor directly:
 
 ```bash
 python implementation_run.py --workspace /path/to/my-project
 ```
 
-### The `IRQ.md` File
-Before running the orchestrator, ensure an `IRQ.md` file exists in the root of your target `--workspace`. This file acts as the "ticket" or "specification" for the agents.
-
-```markdown
-# Task: Add Google OAuth
-Please implement Google OAuth 2.0 login in `auth.py`.
-- Use the `google-auth` library.
-- Create a new endpoint `/login/google`.
-- Do not modify existing email/password logic.
-```
-
 ## Configuration (`run_config.json`)
 
-You can customize the behavior of the agents and the state machine by providing a JSON configuration file.
-
-```bash
-python implementation_run.py --workspace ./my-project --config-file config.json
-```
-
-### Example `config.json`
-
-```json
-{
-  "doer_model": "gemini-2.5-flash-lite",
-  "qa_model": "gemini-3-flash-preview",
-  "max_iters": 5,
-  "registry_base": "~/.gemini/orchestrator/runs",
-  "memory_and_context": {
-    "doer_amnesia_frequency": 1,
-    "qa_amnesia_frequency": 1,
-    "doer_past_qrp_count": 1,
-    "doer_past_irp_count": 0,
-    "qa_past_qrp_count": 2,
-    "qa_past_irp_count": 1
-  }
-}
-```
+The orchestrator's behavior is dictated by a JSON configuration. When dispatched by Layer 2, this is generated automatically in the Central Registry, but you can provide overrides via the CLI.
 
 ### Configuration Parameters
 
-*   **`doer_model` / `qa_model`**: The Gemini models to use for the respective roles.
+*   **`doer_model` / `qa_model`**: The Gemini models to use for the respective roles (e.g., `gemini-3-flash-preview`).
 *   **`max_iters`**: The maximum number of Doer->QA loops before the orchestrator forcefully aborts the run (default: 3).
-*   **`registry_base`**: Override the default location of the Central Registry.
+*   **`registry_base`**: Override the default location of the Central Registry (where telemetry is stored).
 *   **`memory_and_context`**:
-    *   `amnesia_frequency`: How often the agent's internal session ID is reset. `1` means a fresh session every iteration (recommended to prevent anchoring bias).
-    *   `past_qrp_count`: How many previous QA Reports (`QRP.md`) to inject into the agent's XML prompt.
-    *   `past_irp_count`: How many previous Implementation Reports (`IRP.md`) to inject.
+    *   `doer_amnesia_frequency`: How often the Doer's internal session ID is reset. `1` means a fresh session every iteration.
+    *   `qa_amnesia_frequency`: How often the QA's internal session ID is reset.
 
 ## Advanced Overrides via CLI
 
-You can override key parameters directly from the command line without editing the JSON file:
+You can override key parameters directly from the command line:
 
 ```bash
 python implementation_run.py \
@@ -69,12 +36,12 @@ python implementation_run.py \
   --max-iters 10
 ```
 
-## Monitoring a Run
+## Observability and Monitoring
 
-Because the orchestrator routes all logs and artifacts to the Central Registry, the terminal output is intentionally quiet, showing only high-level phase transitions.
+Because Cortex uses Git as the State Machine, the terminal output of `implementation_run.py` is intentionally quiet, showing only high-level phase transitions and Git commit notifications.
 
-To deep-dive into what the agent is doing, navigate to the registry directory (printed in the terminal output, e.g., `~/.gemini/orchestrator/runs/run_1712345678/`).
+To deep-dive into what the agents are doing:
 
-*   Check `logs/v1_doer_try1.log` to see the raw LLM output.
-*   Check `artifacts/v1_IRP.md` to see the evacuated artifact.
-*   Check `run_state.json` to view the live USD cost calculation and API error metrics.
+1. **The Glass**: Run `python tools/dashboard.py` and open `http://localhost:8080`. This provides a live, visual representation of the Git state machine and the LLM's internal monologue.
+2. **Git Log**: Because the orchestrator executes on a dedicated feature branch (`gemini-run-<id>`), you can simply run `git log` or `git diff` in your workspace to view the exact changes made at each "Time Travel Checkpoint."
+3. **The Registry**: Navigate to `~/.gemini/orchestrator/runs/run_<id>/` to view the `run_state.json` (which contains exact USD cost calculations) and the `logs/` directory for raw API responses.

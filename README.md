@@ -53,5 +53,42 @@ Dive deeper into the philosophy and mechanics of the Cortex OS:
 
 ---
 
-## Quick Start
-*(Installation instructions pending physical split completion).*
+## 🚀 Getting Started
+
+### Prerequisites
+
+1.  **Node.js CLI**: Cortex relies on the official Google Gemini CLI for low-level execution.
+    ```bash
+    npm install -g @google/gemini-cli
+    ```
+2.  **Git**: Cortex uses Git as its native state machine. Ensure `git` is installed and configured in your path.
+
+### Installation
+
+```bash
+# Clone Cortex
+git clone https://github.com/jarek108/Cortex.git
+cd Cortex
+
+# Install dependencies (includes gemini-cli-headless)
+pip install -r requirements.txt
+```
+
+### Usage: The Developer Workflow
+
+Cortex is designed to be used via the **Manager CLI**. 
+
+1.  **Initialize a Project**:
+    ```bash
+    python tools/init_project.py /path/to/your/project
+    ```
+2.  **Dispatch a Feature**:
+    Talk to your Interactive Manager (right here). Once you reach the "Certainty Threshold", run the dispatch command:
+    ```bash
+    python tools/implement_feature.py /path/to/your/project --summary "Add a logout button..."
+    ```
+3.  **Monitor via The Glass**:
+    Open the live dashboard to watch the agents work in real-time:
+    ```bash
+    python tools/dashboard.py
+    ```
